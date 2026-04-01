@@ -685,7 +685,7 @@ const Terminal: React.FC<{ onAppOpen: (id: AppID) => void; addNotification: (tex
         // Send function results back to Gemini to get final explanation
         const finalResponse = await geminiService.processCommand(geminiPrompt, [
           ...currentAiHistory,
-          { role: 'model', parts: response.functionCalls.map(fc => ({ functionCall: fc })) },
+          { role: 'model', parts: response.functionCalls.map(fc => ({ functionCall: { name: fc.name, args: fc.args } })) },
           { role: 'function', parts: functionResults.map(r => ({ functionResponse: { name: r.name, response: { result: r.content } } })) }
         ]);
         

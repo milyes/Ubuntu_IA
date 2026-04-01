@@ -1,342 +1,119 @@
+
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubuntu_IA • AI Studio</title>
+    <title>Ubuntu Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Ubuntu+Mono&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Outfit:wght@500;600&amp;family=DM+Mono&amp;display=swap');
-        
-        :root {
-            --primary: #5b8fff;
-            --accent: #3dffc0;
-        }
-        
-        * {
-            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 200ms;
-        }
-        
         body {
-            font-family: 'Inter', system_ui, sans-serif;
+            font-family: 'Ubuntu', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #772953 0%, #2c001e 100%);
+            height: 100vh;
+            color: white;
         }
-        
-        .logo-font {
-            font-family: 'Outfit', sans-serif;
+        .ubuntu-terminal {
+            font-family: 'Ubuntu Mono', monospace;
         }
-        
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-        
-        .terminal {
-            font-family: 'DM Mono', monospace;
-            background: #0a0a0a;
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Terminal Markdown Styling */
+        .terminal-markdown h1, .terminal-markdown h2, .terminal-markdown h3 {
+            font-weight: bold;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            color: #E95420;
+        }
+        .terminal-markdown h1 { font-size: 1.25rem; }
+        .terminal-markdown h2 { font-size: 1.1rem; }
+        .terminal-markdown h3 { font-size: 1rem; }
+        .terminal-markdown p { margin-bottom: 0.75rem; }
+        .terminal-markdown ul, .terminal-markdown ol {
+            margin-left: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .terminal-markdown ul { list-style-type: disc; }
+        .terminal-markdown ol { list-style-type: decimal; }
+        .terminal-markdown li { margin-bottom: 0.25rem; }
+        .terminal-markdown a {
+            color: #E95420;
+            text-decoration: none;
+        }
+        .terminal-markdown a:hover {
+            text-decoration: underline;
+        }
+        .terminal-markdown code {
+            background: rgba(0,0,0,0.3);
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.2rem;
+            font-family: 'Ubuntu Mono', monospace;
+            color: #87ff5f;
+        }
+        .terminal-markdown pre {
+            border-radius: 0.4rem;
+            margin-bottom: 1rem;
+        }
+        .terminal-markdown pre code {
+            padding: 1rem !important;
+            background: transparent;
+            font-size: 14px;
+        }
+        .terminal-markdown blockquote {
+            border-left: 3px solid #E95420;
+            padding-left: 1rem;
+            margin-left: 0.5rem;
+            font-style: italic;
+            color: #ccc;
+        }
+        .terminal-markdown table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+        .terminal-markdown th, .terminal-markdown td {
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.5rem;
+            text-align: left;
+        }
+        .terminal-markdown th {
+            background: rgba(233, 84, 32, 0.1);
         }
     </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.39.0",
+    "react-markdown": "https://esm.sh/react-markdown@^9.0.1",
+    "remark-gfm": "https://esm.sh/remark-gfm@^4.0.0",
+    "react-syntax-highlighter": "https://esm.sh/react-syntax-highlighter@^15.5.0",
+    "react-syntax-highlighter/dist/esm/styles/prism": "https://esm.sh/react-syntax-highlighter@^15.5.0/dist/esm/styles/prism",
+    "react-virtuoso": "https://esm.sh/react-virtuoso@^4.6.2",
+    "react-syntax-highlighter/": "https://esm.sh/react-syntax-highlighter@^16.1.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div class="w-72 bg-zinc-900 border-r border-zinc-800 flex flex-col">
-            <div class="p-6 border-b border-zinc-800">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 bg-gradient-to-br from-[#5b8fff] to-[#3dffc0] rounded-2xl flex items-center justify-center text-xl shadow-inner">♾️</div>
-                    <div>
-                        <h1 class="logo-font text-3xl font-semibold tracking-tight">Ubuntu_IA</h1>
-                        <p class="text-xs text-[#3dffc0] font-medium">AI Studio • Gemini</p>
-                    </div>
-                </div>
-            </div>
-
-            <nav class="flex-1 p-4 space-y-1">
-                <a href="#" onclick="switchTab(0)" class="nav-item flex items-center gap-3 px-5 py-4 rounded-3xl bg-white/5 text-white font-medium">
-                    <span class="text-xl">🏠</span>
-                    <span>Accueil</span>
-                </a>
-                <a href="#" onclick="switchTab(1)" class="nav-item flex items-center gap-3 px-5 py-4 rounded-3xl hover:bg-white/5 text-zinc-300 font-medium">
-                    <span class="text-xl">💬</span>
-                    <span>Chat avec Gemini</span>
-                </a>
-                <a href="#" onclick="switchTab(2)" class="nav-item flex items-center gap-3 px-5 py-4 rounded-3xl hover:bg-white/5 text-zinc-300 font-medium">
-                    <span class="text-xl">🔧</span>
-                    <span>Configuration API</span>
-                </a>
-                <a href="#" onclick="switchTab(3)" class="nav-item flex items-center gap-3 px-5 py-4 rounded-3xl hover:bg-white/5 text-zinc-300 font-medium">
-                    <span class="text-xl">📁</span>
-                    <span>Historique</span>
-                </a>
-            </nav>
-
-            <div class="p-6 border-t border-zinc-800">
-                <div class="text-xs text-zinc-500 mb-2">Repository</div>
-                <a href="https://github.com/milyes/Ubuntu_IA" target="_blank" 
-                   class="flex items-center gap-2 text-[#5b8fff] hover:underline text-sm">
-                    <span>github.com/milyes/Ubuntu_IA</span>
-                </a>
-                <div class="mt-8 text-[10px] text-zinc-600 font-mono">TypeScript + Vite + Gemini API</div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col">
-            <!-- Top Bar -->
-            <header class="h-16 border-b border-zinc-800 bg-zinc-900 px-8 flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <h2 id="tab-title" class="text-2xl font-semibold logo-font">Accueil - Ubuntu_IA</h2>
-                </div>
-                <div class="flex items-center gap-6 text-sm">
-                    <div class="flex items-center gap-2 bg-emerald-400/10 text-emerald-400 px-4 py-1.5 rounded-3xl">
-                        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                        Gemini connecté
-                    </div>
-                    <button onclick="showSetup()" 
-                            class="px-5 py-2 bg-white/5 hover:bg-white/10 rounded-3xl text-sm font-medium">
-                        Configuration rapide
-                    </button>
-                </div>
-            </header>
-
-            <!-- Content Area -->
-            <div class="flex-1 p-8 overflow-auto" id="content">
-                <!-- Tab 0: Accueil -->
-                <div id="tab-0" class="tab-content">
-                    <div class="max-w-3xl mx-auto text-center py-20">
-                        <div class="inline-flex items-center gap-3 bg-zinc-900 border border-white/10 rounded-3xl px-8 py-4 mb-12">
-                            <span class="text-4xl">🧠</span>
-                            <div class="text-left">
-                                <div class="font-semibold text-xl">Bienvenue dans Ubuntu_IA</div>
-                                <div class="text-zinc-400 text-sm">Interface moderne pour Google Gemini AI</div>
-                            </div>
-                        </div>
-
-                        <h1 class="text-6xl font-semibold logo-font tracking-[-2px] leading-none mb-6">
-                            Votre studio IA<br>sur Ubuntu
-                        </h1>
-                        <p class="text-zinc-400 max-w-md mx-auto">
-                            Application web générée à partir du template Gemini AI Studio.<br>
-                            Prête à être exécutée avec <span class="font-mono text-[#3dffc0]">npm run dev</span>.
-                        </p>
-
-                        <div class="mt-16 grid grid-cols-3 gap-6 text-left">
-                            <div class="bg-zinc-900 rounded-3xl p-6">
-                                <div class="text-[#3dffc0] text-2xl mb-3">⚡</div>
-                                <div class="font-medium">Vite + React</div>
-                                <div class="text-xs text-zinc-400 mt-1">Développement ultra-rapide</div>
-                            </div>
-                            <div class="bg-zinc-900 rounded-3xl p-6">
-                                <div class="text-[#5b8fff] text-2xl mb-3">🔑</div>
-                                <div class="font-medium">Gemini API</div>
-                                <div class="text-xs text-zinc-400 mt-1">Clé API dans .env.local</div>
-                            </div>
-                            <div class="bg-zinc-900 rounded-3xl p-6">
-                                <div class="text-amber-400 text-2xl mb-3">📦</div>
-                                <div class="font-medium">TypeScript</div>
-                                <div class="text-xs text-zinc-400 mt-1">88% du codebase</div>
-                            </div>
-                        </div>
-
-                        <div class="mt-12">
-                            <button onclick="switchTab(1)" 
-                                    class="bg-gradient-to-r from-[#5b8fff] to-[#3dffc0] px-10 py-6 rounded-3xl text-lg font-semibold flex items-center gap-3 mx-auto">
-                                Commencer à discuter avec Gemini
-                                <span class="text-2xl">→</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab 1: Chat -->
-                <div id="tab-1" class="tab-content hidden">
-                    <div class="max-w-4xl mx-auto h-full flex flex-col">
-                        <div id="chat-messages" class="flex-1 overflow-auto p-6 space-y-8 terminal rounded-3xl mb-6">
-                            <!-- Messages dynamiques -->
-                        </div>
-
-                        <div class="bg-zinc-900 border border-white/10 rounded-3xl p-3">
-                            <div class="flex gap-3">
-                                <input id="user-input" 
-                                       type="text" 
-                                       placeholder="Posez votre question à Gemini..."
-                                       class="flex-1 bg-transparent outline-none px-6 py-5 text-lg">
-                                <button onclick="sendMessage()" 
-                                        class="bg-[#3dffc0] hover:bg-[#3dffc0]/90 text-black font-semibold px-10 rounded-3xl">
-                                    Envoyer
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab 2: Configuration -->
-                <div id="tab-2" class="tab-content hidden">
-                    <div class="max-w-lg mx-auto glass border border-white/10 rounded-3xl p-10">
-                        <h3 class="text-2xl font-semibold mb-8">Configuration Gemini API</h3>
-                        
-                        <div class="space-y-8">
-                            <div>
-                                <label class="block text-xs uppercase tracking-widest text-zinc-400 mb-3">GEMINI_API_KEY</label>
-                                <input id="api-key-input" type="password" placeholder="AIza..." 
-                                       class="w-full bg-zinc-900 border border-white/10 rounded-2xl px-6 py-6 text-sm font-mono">
-                            </div>
-                            
-                            <div class="bg-black/40 rounded-2xl p-6 text-xs font-mono text-emerald-300">
-                                <div class="mb-2 text-white">Commandes recommandées :</div>
-                                <div>1. npm install</div>
-                                <div>2. echo "GEMINI_API_KEY=votre_clé" &gt; .env.local</div>
-                                <div>3. npm run dev</div>
-                            </div>
-
-                            <button onclick="saveApiKey()" 
-                                    class="w-full py-6 bg-gradient-to-r from-[#5b8fff] to-[#3dffc0] rounded-3xl font-semibold text-lg">
-                                Sauvegarder la configuration
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab 3: Historique -->
-                <div id="tab-3" class="tab-content hidden">
-                    <div class="max-w-2xl mx-auto">
-                        <h3 class="text-xl font-medium mb-6">Historique des prompts</h3>
-                        <div class="space-y-4">
-                            <div class="bg-zinc-900 rounded-3xl p-6 flex justify-between items-center">
-                                <div>
-                                    <p class="text-sm">Explique la différence entre React et Next.js</p>
-                                    <p class="text-xs text-zinc-500">Il y a 2 heures</p>
-                                </div>
-                                <span class="text-[#3dffc0] text-xl">→</span>
-                            </div>
-                            <div class="bg-zinc-900 rounded-3xl p-6 flex justify-between items-center">
-                                <div>
-                                    <p class="text-sm">Génère un script bash pour installer Ubuntu_IA</p>
-                                    <p class="text-xs text-zinc-500">Hier</p>
-                                </div>
-                                <span class="text-[#3dffc0] text-xl">→</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <footer class="h-14 border-t border-zinc-800 bg-zinc-900 px-8 flex items-center text-xs text-zinc-500">
-                <div>Ubuntu_IA • Projet GitHub : <a href="https://github.com/milyes/Ubuntu_IA" target="_blank" class="text-[#5b8fff] hover:underline">milyes/Ubuntu_IA</a></div>
-                <div class="ml-auto">Construit avec ❤️ pour l'écosystème IA open source</div>
-            </footer>
-        </div>
-    </div>
-
-    <!-- Toast -->
-    <div id="toast" class="hidden fixed bottom-6 right-6 bg-zinc-900 border border-[#3dffc0] px-6 py-4 rounded-3xl flex items-center gap-3 shadow-2xl">
-        <span id="toast-icon" class="text-xl"></span>
-        <span id="toast-text" class="font-medium text-sm"></span>
-    </div>
-
-    <script>
-        /**
-         * Z-Claude.code — Interface moderne pour Ubuntu_IA
-         * Basée sur le repo https://github.com/milyes/Ubuntu_IA
-         * Style Tailwind sombre + accents bleu/cyan, typographie moderne
-         * Simulation d'une app Gemini AI Studio
-         */
-
-        let currentTab = 0;
-
-        function switchTab(tabIndex) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.getElementById(`tab-${tabIndex}`).classList.remove('hidden');
-            
-            document.querySelectorAll('.nav-item').forEach((item, i) => {
-                if (i === tabIndex) {
-                    item.classList.add('bg-white/5', 'text-white');
-                } else {
-                    item.classList.remove('bg-white/5', 'text-white');
-                }
-            });
-            
-            currentTab = tabIndex;
-            
-            const titles = ["Accueil - Ubuntu_IA", "Chat Gemini", "Configuration API", "Historique des prompts"];
-            document.getElementById('tab-title').textContent = titles[tabIndex];
-        }
-
-        // Simulation chat
-        function addMessage(text, isUser = false) {
-            const container = document.getElementById('chat-messages');
-            const msg = document.createElement('div');
-            msg.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
-            msg.innerHTML = `
-                <div class="${isUser ? 'bg-[#5b8fff] text-white' : 'bg-zinc-800'} max-w-[75%] rounded-3xl px-6 py-4">
-                    ${text}
-                </div>
-            `;
-            container.appendChild(msg);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('user-input');
-            const text = input.value.trim();
-            if (!text) return;
-            
-            addMessage(text, true);
-            input.value = '';
-            
-            // Simulation réponse Gemini
-            setTimeout(() => {
-                const responses = [
-                    "Bien sûr ! Voici une explication détaillée...",
-                    "Selon le modèle Gemini, voici ma réponse :",
-                    "Excellente question. Laissez-moi vous aider."
-                ];
-                addMessage(responses[Math.floor(Math.random() * responses.length)]);
-            }, 800);
-        }
-
-        function saveApiKey() {
-            const key = document.getElementById('api-key-input').value.trim();
-            if (key) {
-                showToast("✅ Clé API sauvegardée (simulation)", "🔑");
-            } else {
-                showToast("Veuillez entrer une clé API valide", "⚠️");
-            }
-        }
-
-        function showSetup() {
-            switchTab(2);
-            showToast("Ouvrez le dossier du repo et exécutez npm run dev", "📋");
-        }
-
-        function showToast(message, icon = "✅") {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-icon').textContent = icon;
-            document.getElementById('toast-text').textContent = message;
-            toast.classList.remove('hidden');
-            
-            setTimeout(() => toast.classList.add('hidden'), 3000);
-        }
-
-        // Initialisation
-        window.onload = () => {
-            switchTab(0);
-            
-            // Message de bienvenue dans le chat
-            setTimeout(() => {
-                if (currentTab === 1) return;
-                addMessage("Bonjour ! Je suis Gemini, prêt à vous assister dans Ubuntu_IA.", false);
-            }, 1200);
-            
-            console.log('%c✅ Interface Ubuntu_IA chargée - Repo : https://github.com/milyes/Ubuntu_IA', 'color:#3dffc0; font-family:DM Mono');
-            
-            // Support Entrée dans le chat
-            document.getElementById('user-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendMessage();
-            });
-        };
-    </script>
+<body>
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
