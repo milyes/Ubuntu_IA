@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Parkinson Logic • Connexion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Outfit:wght@500;600&amp;family=DM+Mono&amp;display=swap');
+        
+        :root {
+            --tw-color-primary: #5b8fff;
+            --tw-color-accent: #3dffc0;
+        }
+        
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 200ms;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .logo-font {
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(24px);
+        }
+        
+        .input-error {
+            border-color: #f87171 !important;
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+        }
+        
+        .error-message {
+            animation: shake 0.4s cubic-bezier(0.36, 0, 0.66, -0.56) both;
+        }
+        
+        @keyframes shake {
+            10%, 90% { transform: translateX(-2px); }
+            20%, 80% { transform: translateX(3px); }
+            30%, 50%, 70% { transform: translateX(-4px); }
+            40%, 60% { transform: translateX(4px); }
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex items-center justify-center overflow-hidden relative">
+    <!-- Fond subtil -->
+    <div class="absolute inset-0 bg-[radial-gradient(at_center,#5b8fff10_0%,transparent_70%)]"></div>
+
+    <div class="max-w-md w-full px-6">
+        <!-- Logo + Titre -->
+        <div class="flex flex-col items-center mb-12">
+            <div class="w-20 h-20 bg-gradient-to-br from-[#5b8fff] to-[#3dffc0] rounded-3xl flex items-center justify-center shadow-2xl mb-6">
+                <span class="text-5xl">🧠</span>
+            </div>
+            <h1 class="logo-font text-5xl font-semibold tracking-[-2px] text-white">Parkinson Logic</h1>
+            <p class="text-[#3dffc0] text-sm tracking-[3px] font-medium mt-1">IA NEUROLOGIQUE • v24.03</p>
+            <p class="text-zinc-500 text-xs mt-8 text-center">Plateforme d’analyse multimodale<br>pour la maladie de Parkinson</p>
+        </div>
+
+        <!-- Card de connexion -->
+        <div class="glass border border-white/10 rounded-3xl p-10 shadow-2xl">
+            <h2 class="text-2xl font-semibold mb-8 text-center">Connexion sécurisée</h2>
+            
+            <form id="login-form" onsubmit="handleSubmit(event)" class="space-y-6">
+                <!-- Email -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-zinc-400 mb-2 font-medium">Adresse e-mail professionnelle</label>
+                    <input id="email" 
+                           type="email" 
+                           value="mohammed.ilyes.zoubirou@neuro.ca"
+                           placeholder="nom@etablissement.ca"
+                           required
+                           class="w-full bg-zinc-900 border border-white/10 focus:border-[#5b8fff] rounded-2xl px-6 py-5 text-sm outline-none placeholder:text-zinc-500">
+                    <p id="email-error" class="hidden text-red-400 text-xs mt-2 error-message"></p>
+                </div>
+
+                <!-- Mot de passe -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-zinc-400 mb-2 font-medium">Mot de passe</label>
+                    <div class="relative">
+                        <input id="password" 
+                               type="password" 
+                               value="demo2026"
+                               placeholder="••••••••"
+                               required
+                               class="w-full bg-zinc-900 border border-white/10 focus:border-[#5b8fff] rounded-2xl px-6 py-5 text-sm outline-none">
+                        <button type="button" onclick="togglePassword()" 
+                                class="absolute right-6 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white text-xl">
+                            👁️
+                        </button>
+                    </div>
+                    <p id="password-error" class="hidden text-red-400 text-xs mt-2 error-message"></p>
+                </div>
+
+                <!-- Options -->
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center gap-x-2 cursor-pointer">
+                        <input type="checkbox" id="remember" checked class="w-4 h-4 accent-[#3dffc0]">
+                        <span class="text-zinc-400">Se souvenir de moi</span>
+                    </label>
+                    <a href="#" onclick="forgotPassword(event)" 
+                       class="text-[#5b8fff] hover:underline text-sm">Mot de passe oublié ?</a>
+                </div>
+
+                <!-- Bouton Connexion -->
+                <button id="submit-btn"
+                        type="submit"
+                        class="w-full bg-gradient-to-r from-[#5b8fff] to-[#3dffc0] hover:brightness-110 active:scale-[0.985] text-white font-semibold py-6 rounded-3xl text-lg shadow-inner flex items-center justify-center gap-x-3 disabled:opacity-70">
+                    <span id="btn-text">SE CONNECTER À L’IA</span>
+                    <span id="btn-spinner" class="hidden animate-spin">⟳</span>
+                </button>
+            </form>
+
+            <!-- Séparateur -->
+            <div class="my-8 flex items-center gap-x-4">
+                <div class="flex-1 h-px bg-white/10"></div>
+                <span class="text-zinc-500 text-xs uppercase tracking-widest">ou</span>
+                <div class="flex-1 h-px bg-white/10"></div>
+            </div>
+
+            <!-- SSO -->
+            <button onclick="ssoLogin()" 
+                    class="w-full border border-white/10 hover:border-white/30 py-5 rounded-3xl flex items-center justify-center gap-x-3 text-sm font-medium">
+                <span class="text-xl">🔑</span>
+                <span>Continuer avec Google Workspace (CHUM)</span>
+            </button>
+        </div>
+
+        <!-- Infos bas de page -->
+        <div class="mt-10 text-center text-xs text-zinc-500 space-y-1">
+            <p>Environnement de développement</p>
+            <p class="font-mono text-[10px] text-zinc-600 break-all">ais-dev-6owubkm7xlyysxv5xhscpu-37476444820.us-west2.run.app</p>
+            <p class="pt-4">© 2026 Parkinson Logic IA • Tous droits réservés</p>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 bg-zinc-900 border border-[#3dffc0] text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-x-3 text-sm">
+        <span id="toast-icon"></span>
+        <span id="toast-message" class="font-medium"></span>
+    </div>
+
+    <script>
+        /**
+         * Z-Claude.code — Page de connexion IA Parkinson Logic
+         * Avec validation complète du formulaire (email + mot de passe)
+         * Design sombre professionnel - Accents #5b8fff / #3dffc0
+         * Meilleures pratiques 2026 : feedback visuel, accessibilité, UX fluide
+         */
+
+        // Variables globales
+        let isLoading = false;
+
+        // Validation email
+        function isValidEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
+        // Affichage d'erreur
+        function showFieldError(fieldId, message) {
+            const errorEl = document.getElementById(fieldId + '-error');
+            const inputEl = document.getElementById(fieldId);
+            
+            if (errorEl && inputEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+                inputEl.classList.add('input-error');
+            }
+        }
+
+        // Suppression d'erreur
+        function clearFieldError(fieldId) {
+            const errorEl = document.getElementById(fieldId + '-error');
+            const inputEl = document.getElementById(fieldId);
+            
+            if (errorEl && inputEl) {
+                errorEl.classList.add('hidden');
+                inputEl.classList.remove('input-error');
+            }
+        }
+
+        // Validation complète du formulaire
+        function validateForm() {
+            let isValid = true;
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            // Reset erreurs
+            clearFieldError('email');
+            clearFieldError('password');
+
+            // Validation email
+            if (!email) {
+                showFieldError('email', 'L\'adresse e-mail est requise');
+                isValid = false;
+            } else if (!isValidEmail(email)) {
+                showFieldError('email', 'Veuillez entrer une adresse e-mail valide');
+                isValid = false;
+            } else if (!email.endsWith('.ca') && !email.includes('@neuro')) {
+                showFieldError('email', 'Utilisez votre adresse professionnelle (.ca ou @neuro)');
+                isValid = false;
+            }
+
+            // Validation mot de passe
+            if (!password) {
+                showFieldError('password', 'Le mot de passe est requis');
+                isValid = false;
+            } else if (password.length < 6) {
+                showFieldError('password', 'Le mot de passe doit contenir au moins 6 caractères');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Gestion soumission formulaire
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            if (isLoading) return;
+            
+            const isValid = validateForm();
+            if (!isValid) {
+                showToast("Veuillez corriger les erreurs dans le formulaire", "⚠️", 2500);
+                return;
+            }
+
+            // Simulation chargement
+            startLoading();
+            
+            const email = document.getElementById('email').value.trim();
+            
+            // Simulation appel API (2 secondes)
+            setTimeout(() => {
+                stopLoading();
+                
+                if (email.includes('zoubirou')) {
+                    showToast("✅ Authentification réussie ! Redirection vers le dashboard...", "🧠", 1800);
+                    
+                    // Redirection simulée vers l'URL de dev
+                    setTimeout(() => {
+                        window.location.href = "https://ais-dev-6owubkm7xlyysxv5xhscpu-37476444820.us-west2.run.app";
+                    }, 1500);
+                } else {
+                    showToast("❌ Identifiants incorrects. Utilisez l'email de démo.", "❌", 3000);
+                }
+            }, 1850);
+        }
+
+        // Gestion état chargement
+        function startLoading() {
+            isLoading = true;
+            const btn = document.getElementById('submit-btn');
+            const text = document.getElementById('btn-text');
+            const spinner = document.getElementById('btn-spinner');
+            
+            btn.disabled = true;
+            text.classList.add('hidden');
+            spinner.classList.remove('hidden');
+        }
+
+        function stopLoading() {
+            isLoading = false;
+            const btn = document.getElementById('submit-btn');
+            const text = document.getElementById('btn-text');
+            const spinner = document.getElementById('btn-spinner');
+            
+            btn.disabled = false;
+            text.classList.remove('hidden');
+            spinner.classList.add('hidden');
+        }
+
+        // Toggle visibilité mot de passe
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const isPassword = passwordInput.type === 'password';
+            
+            passwordInput.type = isPassword ? 'text' : 'password';
+        }
+
+        // Toast système
+        function showToast(message, icon = "✅", duration = 2800) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-icon').innerHTML = icon;
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, duration);
+        }
+
+        function forgotPassword(e) {
+            e.preventDefault();
+            showToast("Un lien de réinitialisation a été envoyé à votre adresse professionnelle", "📧", 3200);
+        }
+
+        function ssoLogin() {
+            showToast("Redirection vers Google Workspace (CHUM)...", "🔑", 2200);
+            setTimeout(() => {
+                showToast("✅ Session SSO validée avec succès", "🧬", 1500);
+                setTimeout(() => {
+                    window.location.href = "https://ais-dev-6owubkm7xlyysxv5xhscpu-37476444820.us-west2.run.app";
+                }, 1200);
+            }, 1800);
+        }
+
+        // Initialisation
+        window.onload = function() {
+            console.log('%c🔐 IA Parkinson Logic - Page de connexion avec validation chargée', 'color:#3dffc0; font-family:monospace');
+            
+            // Support clavier Entrée
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !isLoading) {
+                    const form = document.getElementById('login-form');
+                    if (form) handleSubmit(new Event('submit'));
+                }
+            });
+
+            // Validation en temps réel sur blur
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            
+            emailInput.addEventListener('blur', () => {
+                if (emailInput.value.trim()) {
+                    if (!isValidEmail(emailInput.value.trim())) {
+                        showFieldError('email', 'Format d\'email invalide');
+                    } else {
+                        clearFieldError('email');
+                    }
+                }
+            });
+            
+            passwordInput.addEventListener('blur', () => {
+                if (passwordInput.value.trim() && passwordInput.value.length < 6) {
+                    showFieldError('password', 'Mot de passe trop court');
+                }
+            });
+
+            // Message de bienvenue démo
+            setTimeout(() => {
+                showToast("Utilisez l’email de démo pour tester la validation", "ℹ️", 2800);
+            }, 1200);
+        }
+    </script>
+</body>
+</html>
