@@ -8,7 +8,7 @@ import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 
-const commands = ['clear', 'help', 'whoami', 'info', 'pkg', 'sudo', 'snap', 'sys.time_dilate', 'ls', 'pwd', 'cd', 'mkdir', 'touch', 'cat', 'echo', 'uname', 'date', 'uptime', 'rm', 'cp', 'mv', 'ai'];
+const commands = ['clear', 'help', 'whoami', 'info', 'pkg', 'sudo', 'snap', 'apt', 'sys.time_dilate', 'ls', 'pwd', 'cd', 'mkdir', 'touch', 'cat', 'echo', 'uname', 'date', 'uptime', 'rm', 'cp', 'mv', 'ai'];
 
 const packageMap: Record<string, AppID> = {
   'file-explorer': 'files',
@@ -300,7 +300,7 @@ const Terminal: React.FC<{ onAppOpen: (id: AppID) => void; addNotification: (tex
       }
 
       if (baseCmd === 'help') {
-        setLines(prev => [...prev, { type: 'output', content: "### Commandes :\n- **clear** : Effacer l'écran\n- **help** : Afficher ce message\n- **whoami** : Infos de session\n- **info** : Infos système\n- **ls [path]** : Lister les fichiers\n- **pwd** : Afficher le répertoire courant\n- **cd [dir]** : Changer de répertoire\n- **mkdir [-p] [dir]** : Créer un répertoire\n- **touch [file]** : Créer un fichier\n- **cp [-r] [src] [dest]** : Copier un fichier ou dossier\n- **mv [src] [dest]** : Déplacer ou renommer un fichier/dossier\n- **rm [-r] [item]** : Supprimer un fichier ou dossier\n- **cat [file]** : Lire un fichier\n- **echo [text]** : Afficher du texte\n- **uname** : Infos noyau\n- **date** : Date actuelle\n- **uptime** : Temps d'activité\n- **pkg install [paquet]** : Installer une application\n- **snap install [paquet]** : Installer une application via snap\n- **sudo apt update** : Mise à jour système\n- **ai [prompt]** : Interroger l'IA Gemini 3 Flash" }]);
+        setLines(prev => [...prev, { type: 'output', content: "### Commandes :\n- **clear** : Effacer l'écran\n- **help** : Afficher ce message\n- **whoami** : Infos de session\n- **info** : Infos système\n- **ls [path]** : Lister les fichiers\n- **pwd** : Afficher le répertoire courant\n- **cd [dir]** : Changer de répertoire\n- **mkdir [-p] [dir]** : Créer un répertoire\n- **touch [file]** : Créer un fichier\n- **cp [-r] [src] [dest]** : Copier un fichier ou dossier\n- **mv [src] [dest]** : Déplacer ou renommer un fichier/dossier\n- **rm [-r] [item]** : Supprimer un fichier ou dossier\n- **cat [file]** : Lire un fichier\n- **echo [text]** : Afficher du texte\n- **uname** : Infos noyau\n- **date** : Date actuelle\n- **uptime** : Temps d'activité\n- **pkg install [paquet]** : Installer une application\n- **snap install [paquet]** : Installer une application via snap\n- **pkg list** : Lister les paquets disponibles\n- **sudo apt update** : Mise à jour système\n- **ai [prompt]** : Interroger l'IA Gemini 3 Flash" }]);
         return;
       }
 
@@ -609,17 +609,45 @@ const Terminal: React.FC<{ onAppOpen: (id: AppID) => void; addNotification: (tex
       }
 
       // Package commands
-      if (cmd.startsWith('pkg install') || cmd.startsWith('snap install') || cmd.startsWith('sudo apt install')) {
-        const pkg = args[args.length - 1];
-        const manager = parts[0] === 'sudo' ? 'apt' : parts[0];
-        const appId = packageMap[pkg];
-        
-        if (appId) {
-          await simulateInstall(pkg, appId, manager);
-        } else {
-          setLines(prev => [...prev, { type: 'error', content: `E: Impossible de trouver le paquet ${pkg}` }]);
+      if (baseCmd === 'pkg' || baseCmd === 'snap' || (baseCmd === 'sudo' && args[0] === 'apt')) {
+        const subCmd = baseCmd === 'sudo' ? args[1] : args[0];
+        const pkg = baseCmd === 'sudo' ? args[2] : args[1];
+        const manager = baseCmd === 'sudo' ? 'apt' : baseCmd;
+
+        if (!subCmd || (subCmd !== 'install' && subCmd !== 'list' && subCmd !== 'update')) {
+          setLines(prev => [...prev, { type: 'output', content: `Usage: ${baseCmd} ${baseCmd === 'sudo' ? 'apt ' : ''}[command] [package]\n\nCommandes:\n  install   Installer un paquet\n  list      Lister les paquets disponibles\n  update    Mettre à jour les listes de paquets` }]);
+          return;
         }
-        return;
+
+        if (subCmd === 'list') {
+          setLines(prev => [...prev, { type: 'output', content: `### Paquets disponibles via ${manager} :\n${Object.keys(packageMap).map(p => `- ${p}`).join('\n')}` }]);
+          return;
+        }
+
+        if (subCmd === 'update') {
+          setLines(prev => [...prev, 
+            { type: 'system', content: `Atteint :1 http://archive.ubuntu.com/ubuntu noble InRelease` },
+            { type: 'system', content: `Atteint :2 http://archive.ubuntu.com/ubuntu noble-updates InRelease` },
+            { type: 'system', content: `Lecture des listes de paquets... Fait` },
+            { type: 'system', content: `Construction de l'arbre des dépendances... Fait` },
+            { type: 'system', content: `Tous les paquets sont à jour.` }
+          ]);
+          return;
+        }
+
+        if (subCmd === 'install') {
+          if (!pkg) {
+            setLines(prev => [...prev, { type: 'error', content: `${baseCmd}: argument manquant pour 'install'` }]);
+            return;
+          }
+          const appId = packageMap[pkg];
+          if (appId) {
+            await simulateInstall(pkg, appId, manager);
+          } else {
+            setLines(prev => [...prev, { type: 'error', content: `E: Impossible de trouver le paquet ${pkg}` }]);
+          }
+          return;
+        }
       }
 
       // AI commands
@@ -721,9 +749,26 @@ const Terminal: React.FC<{ onAppOpen: (id: AppID) => void; addNotification: (tex
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Tab') {
       e.preventDefault();
-      const matches = commands.filter(c => c.startsWith(inputValue));
-      if (matches.length === 1) setInputValue(matches[0]);
-      else if (matches.length > 1) setSuggestions(matches);
+      const parts = inputValue.split(' ');
+      if (parts.length === 1) {
+        const matches = commands.filter(c => c.startsWith(inputValue));
+        if (matches.length === 1) setInputValue(matches[0]);
+        else if (matches.length > 1) setSuggestions(matches);
+      } else if (parts.length === 2 && (parts[0] === 'pkg' || parts[0] === 'snap' || parts[0] === 'sudo')) {
+        const subCommands = parts[0] === 'sudo' ? ['apt'] : ['install', 'list', 'update'];
+        const matches = subCommands.filter(s => s.startsWith(parts[1]));
+        if (matches.length === 1) setInputValue(`${parts[0]} ${matches[0]}`);
+        else if (matches.length > 1) setSuggestions(matches);
+      } else if (parts.length === 3 && (parts[0] === 'pkg' || parts[0] === 'snap' || (parts[0] === 'sudo' && parts[1] === 'apt'))) {
+        const subCommands = (parts[0] === 'sudo' && parts[1] === 'apt') ? ['install', 'update', 'list'] : Object.keys(packageMap);
+        const matches = subCommands.filter(s => s.startsWith(parts[2]));
+        if (matches.length === 1) setInputValue(`${parts[0]} ${parts[1]} ${matches[0]}`);
+        else if (matches.length > 1) setSuggestions(matches);
+      } else if (parts.length === 4 && parts[0] === 'sudo' && parts[1] === 'apt' && parts[2] === 'install') {
+        const matches = Object.keys(packageMap).filter(p => p.startsWith(parts[3]));
+        if (matches.length === 1) setInputValue(`${parts[0]} ${parts[1]} ${parts[2]} ${matches[0]}`);
+        else if (matches.length > 1) setSuggestions(matches);
+      }
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       if (history.length > 0) {
